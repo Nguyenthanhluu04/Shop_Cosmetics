@@ -3,7 +3,7 @@
 </script>
 
 <template>
-   <div class="flex justify-center place-items-center ">
+   <router-link :to="{name: 'CartPage'}" class="flex justify-center place-items-center ">
         <div class="w-[150px] flex justify-center cursor-pointer">
             <div class="relative">
                 <i class=" text-white text-[24px] fa-solid fa-cart-shopping"></i>
@@ -11,5 +11,5 @@
             </div>
         </div>
         
-   </div> 
+   </router-link> 
 </template> 
