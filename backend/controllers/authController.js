@@ -1,105 +1,128 @@
-
-import db from '../models/db.js';
+import bcrypt from 'bcrypt'
+import db from '../models/db.js'
 import jwt from 'jsonwebtoken'
 
 
-const generateAccessToken = (user) => {
- return jwt.sign(
+export const generateAccessToken = (user) =>{
+
+  return jwt.sign(
     user,
     process.env.JWT_SECRET,
-    {expiresIn: '15m'}
-    )
+    { expiresIn: '1m'}
+  ) 
+}
+
+export const generateRefreshToken = (user) => {
    
+  return jwt.sign(
+    user,
+    process.env.JWT_REFRESH_SECRET,
+    {expiresIn: '7d'}
+  )
 }
 
-const generateRefreshToken = (user) => {
-return jwt.sign(user,process.env.JWT_REFRESH_SECRET,{
-    expiresIn: '7d'
-  })
+export const handleRefreshToken =  (req,res) => {
+
+const {refreshToken} = req.body
+
+
+if(!refreshToken){
+  return res.status(401).json({mesaage:'Server không nhận được refreshToken '})
 }
 
-export const refreshToken = async (req,res) => {
+try {
 
-  const  {refreshToken} = req.body
-
-  if(!refreshToken) {
-    return res.status(401).json({message: 'server không nhận được refreshToken !'})
-  }
- 
- try {
   const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_SECRET)
-   
+
   const newAccessToken = jwt.sign(
-    {id: decoded.id, username: decoded.username},
+    {id:decoded.id,userName:decoded.tenKH,role:decoded.role},
     process.env.JWT_SECRET,
-    {expiresIn: '15m'}
+    {expiresIn:'1m'}
   )
 
   res.json({accessToken: newAccessToken})
-
- } catch (err) {
+  
+} catch (error) {
       return res.status(401).json({ message: 'Refresh token không hợp lệ hoặc đã hết hạn' })
-
- }
-
-}
-
-export const login =  async (req, res) => {
-  const { email, password } = req.body
-  try {
-    const [rows] = await db.execute(
-      'SELECT * FROM users WHERE email = ? AND password = ?',
-      [email, password]
-    )
-
-    if (rows.length === 0) {
-      return res.status(401).json({ message: 'Sai tài khoản hoặc mật khẩu' })
-    }
-
-    const user = rows[0]
-
-    const inforUser = {id: user.id, username: user.username}
-
-    const accessToken = generateAccessToken(inforUser)
-    const refreshToken = generateRefreshToken(inforUser)
-    
-
-
-    res.json({ accessToken,refreshToken }) 
-  } catch (err) {
-    res.status(500).json({ message: 'Lỗi server', error: err.message })
-  }
   
 }
 
- export const register = async (req,res) => {
-  const {username, email, password } = req.body;
+}
+
+export const handleLogin = async (req,res) => {
+  const {email,password} = req.body
 
   try {
-      const [existing ] = await db.execute(
-        'SELECT * FROM users WHERE username = ?', [username]
-      )
+    const [rows] = await db.execute('SELECT * FROM users WHERE email = ?',[email])
 
-      if(existing.length >0){
-        return res.status(400).json({message: 'tài khoản đã tồn tại'})
-      }
+    if(rows.length === 0 ) {
+      return res.status(404).json({mesaage: 'Email không tồn tại , vui lòng kiểm tra lại !'})
+    }
 
-     const [result] =   await db.execute(
-        'INSERT INTO users  (username,email, password ) VALUES (?,?,?)' , [username,email,password]
-     )
+    const user = rows[0];
+
+    const checkPassword = await bcrypt.compare(password,user.pass)
+
+    if(!checkPassword) {
+      return res.status(401).json({mesaage:'Mật khẩu không chính xác !'})
+    }
+     
+    const userInfor = {id:user.id,userName:user.tenKH,role:user.role}
     
-     const userId = result.insertId;
+    const accessToken = generateAccessToken(userInfor)
+    const refreshToken = generateRefreshToken(userInfor)
 
-     const inforUser = {id: userId , username}
+    res.json({accessToken,refreshToken})
 
-     const accessToken = generateAccessToken(inforUser)
-      const refreshToken = generateRefreshToken(inforUser)
+  } catch (error) {
+    console.error('Lỗi đăng nhập:', error) 
 
- 
-    res.json({ accessToken,refreshToken })
-  } catch (err) {
-    console.error('Lỗi đăng ký:', err) 
-    res.status(500).json({ message: 'Lỗi server', error: err.message })
-    
+    return res.status(500).json({mesaage: 'Lỗi server khi Login !',error: error.message})
   }
 }
+
+export const handleRegister = async (req,res) => {
+  const {userName,email,password} = req.body
+
+  try {
+    const [existing] = await db.execute(
+      'SELECT * FROM users WHERE email = ?',[email]
+    )
+    if(existing.length >0){
+      return res.status(400).json({mesaage: 'Email đã được sử dụng'})
+    }
+
+    const hashedPassword = await bcrypt.hash(password,10);
+
+    const [result] = await db.execute(
+      'INSERT INTO users (tenKH,email,pass,role) VALUES (?,?,?,?)',[userName,email,hashedPassword,'user']
+    )
+
+    const userId = result.insertId;
+  
+    const role = result.role;
+
+    const userInfor = {id:userId,userName,role}
+
+    const accessToken = generateAccessToken(userInfor);
+    const refreshToken = generateRefreshToken(userInfor);
+
+    res.json({accessToken,refreshToken})
+
+
+  } catch (error) {
+    console.error('Lỗi đăng ký:', error) 
+    res.status(500).json({ message: 'Lỗi server', error: error.message })
+  }
+}
+
+
+
+
+
+
+
+
+
+
+

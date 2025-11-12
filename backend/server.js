@@ -9,12 +9,13 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-import authRouter from './routes/auth.js'
-import todoRouter from './routes/todo.js'
+import authRouter from './routes/authRoutes.js'
+import productRoutes from './routes/productRoutes.js'
+import cartRoutes from  './routes/cartRoutes.js'
 
 app.use('/api/auth', authRouter)
-app.use('/api/todo',todoRouter)
-
+app.use('/api/product',productRoutes)
+app.use('/api/cart',cartRoutes)
 
 
 const PORT = process.env.PORT 

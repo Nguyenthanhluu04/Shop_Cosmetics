@@ -12,11 +12,14 @@ export const verifyToken = (req,res,next) => {
         return res.status(401).json({message: 'Không có token !'})
     }
     
-        jwt.verify(token, process.env.JWT_SECRET,(err,user) =>{
+        jwt.verify(token, process.env.JWT_SECRET,(err,decode) =>{
          if(err){
             return res.status(401).json({message:' sai Token'})
          }
-         req.user = user;
+         
+         req.user = decode;
+
+
          next();
         })
 

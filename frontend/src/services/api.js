@@ -32,7 +32,7 @@ api.interceptors.response.use(
 
       if (!refreshToken) {
         localStorage.clear()
-        window.location.href = '/'
+        window.location.href = '/LoginPage'
         return Promise.reject(error)
       }
 
@@ -49,7 +49,7 @@ api.interceptors.response.use(
       } catch (err) {
         // Refresh thất bại → logout
         localStorage.clear()
-        window.location.href = '/'
+        window.location.href = '/LoginPage'
         return Promise.reject(err)
       }
     }
