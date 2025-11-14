@@ -28,7 +28,7 @@ const goToDetails = (id) => {
 <template>
 
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3 lg:gap-4 ">
-            <div v-for="(product) in productStore.listProduct" :key="product.id" @click="goToDetails(product.id)" class="relative w-full cursor-pointer border border-transparent hover:border-[#FFD840]  bg-white rounded-br-md rounded-bl-md hover:shadow-md shadow-sm">
+            <div v-for="(product) in productStore.listProduct" :key="product.id" @click="goToDetails(product.id)" class=" product__container relative w-full cursor-pointer border   bg-white rounded-br-md rounded-bl-md hover:shadow-md shadow-sm">
                 <div class=" pt-[100%] bg-contain bg-no-repeat bg-center" :style="{backgroundImage: `url(${product.urlImg })`}"></div>
                     <div class="pt-2 px-2">
                         <span class=" overflow-hidden line-clamp-2 leading-5 text-[var(--text-color)] ">{{ product.title  }}</span>
@@ -72,3 +72,10 @@ const goToDetails = (id) => {
 
     </div>
 </template>
+
+<style scoped>
+.product__container:hover {
+    transform: translateY(-2px);
+    transition: all 0.2s ease-in-out;
+}
+</style>

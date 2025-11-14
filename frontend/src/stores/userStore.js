@@ -1,16 +1,18 @@
 import { defineStore } from "pinia";
 import api from '@/services/api.js'
-import {  ref } from "vue";
+import { ref } from "vue";
 import { jwtDecode } from "jwt-decode";
 
 export const useUserStore = defineStore('userStore', () => {
 
   const accessToken = ref(localStorage.getItem('accessToken') || null)
   const refreshToken = ref(localStorage.getItem('refreshToken') || null)
-         console.log('ac',accessToken.value)
-         console.log('rf',refreshToken.value)
+  console.log('ac',accessToken.value)
+  console.log('rf',refreshToken.value)
    
-  const userInfor = ref(null)
+
+  // giải mã token khi refresh token
+   const userInfor = ref(null)
 
  if(accessToken.value){
     try {
@@ -19,15 +21,18 @@ export const useUserStore = defineStore('userStore', () => {
       userInfor.value = null
     }
  }
+  
+
 
 const setToken = (token,refresh) => {
       accessToken.value = token
       refreshToken.value = refresh
 
       localStorage.setItem('accessToken',token)
-       localStorage.setItem('refreshToken',refresh)
-
-       try {
+      localStorage.setItem('refreshToken',refresh)
+   
+      // giải mã token  dùng khi mới đăng nhập hoặc đăng ký
+         try {
         if(token){
           userInfor.value = jwtDecode(token)
         }
@@ -79,13 +84,11 @@ const setToken = (token,refresh) => {
   }
 
   const handleLogOut =  () => {
-
-   accessToken.value = null,
-   refreshToken.value = null,
-     userInfor.value = null,
-   localStorage.removeItem('accessToken'),
+   accessToken.value = null
+   refreshToken.value = null
+    userInfor.value = null,
+   localStorage.removeItem('accessToken')
    localStorage.removeItem('refreshToken')
-   
   }
 
   return {accessToken, refreshToken, userInfor,setToken, handleLogin, handleRegister, handleLogOut}

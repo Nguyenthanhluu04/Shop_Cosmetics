@@ -7,7 +7,8 @@ export const useCartStore = defineStore('cartStore', ()=> {
   const listCartItems = ref([])
 
 const handleAddToCart = async (productId,quantity) => {
-
+   
+  
    try {
    
      await api.post('/api/cart/addcart',{productId,quantity})

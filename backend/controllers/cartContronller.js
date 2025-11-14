@@ -2,6 +2,8 @@ import db from '../models/db.js'
 
 export const handleAddToCart = async (req,res) => {
 
+
+    
     const userId = req.user.id;
 
     const {productId,quantity} = req.body;
@@ -30,7 +32,7 @@ export const handleAddToCart = async (req,res) => {
         );
       }
        
-      res.json({
+      return res.json({
         success: true,
         message: existingItem.length > 0 ? "Đã cập nhật số lượng sản phẩm trong giỏ hàng" : "Đã thêm sản phẩm vào giỏ hàng",
         result
@@ -38,13 +40,12 @@ export const handleAddToCart = async (req,res) => {
 
     } catch (error) {
       console.error('Error adding to cart:', error);
-      res.status(500).json({message: "Lỗi server khi thêm vào giỏ hàng"})
+      return res.status(500).json({message: "Lỗi server khi thêm vào giỏ hàng"})
     }
- 
-    
 }
 
 export const handleGetCartItems = async (req,res) => {
+   
    const userId = req.user.id ;
 
    try {
@@ -69,9 +70,9 @@ export const handleGetCartItems = async (req,res) => {
     });
     
     
-    res.json({listCartItems: formattedCartItems})    
+    return res.json({listCartItems: formattedCartItems})    
    } catch (error) {
-      res.status(500).json({message: "Lỗi server lấy danh sách giỏ hàng "})
+      return res.status(500).json({message: "Lỗi server lấy danh sách giỏ hàng "})
     
    }
 }
@@ -94,13 +95,13 @@ export const handleUpdateQuantity = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy sản phẩm trong giỏ hàng" });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "Đã cập nhật số lượng sản phẩm"
     });
   } catch (error) {
     console.error('Error updating quantity:', error);
-    res.status(500).json({ message: "Lỗi server khi cập nhật số lượng" });
+    return res.status(500).json({ message: "Lỗi server khi cập nhật số lượng" });
   }
 }
 
@@ -118,12 +119,12 @@ export const handleRemoveCartItem = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy sản phẩm trong giỏ hàng" });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "Đã xóa sản phẩm khỏi giỏ hàng"
     });
   } catch (error) {
     console.error('Error removing cart item:', error);
-    res.status(500).json({ message: "Lỗi server khi xóa sản phẩm" });
+    return res.status(500).json({ message: "Lỗi server khi xóa sản phẩm" });
   }
 }

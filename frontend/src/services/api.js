@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-
 const api = axios.create({
     baseURL: 'http://localhost:3000',
     headers: {
@@ -41,8 +40,8 @@ api.interceptors.response.use(
 
         const newAccessToken = res.data.accessToken
         console.log('newAC', res.data.accessToken)
-        localStorage.setItem('accessToken', newAccessToken)
-
+         localStorage.setItem('accessToken', newAccessToken)
+             
         // Retry request cũ với token mới
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         return api(originalRequest)

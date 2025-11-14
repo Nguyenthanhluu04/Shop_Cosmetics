@@ -37,7 +37,10 @@ const addToCart = async (productId,styleAdd) => {
 
   const ok =  await cartStore.handleAddToCart(productId,quantity.value) 
 
-  if(ok) {
+  if(ok && styleAdd === 'addToCart'){ 
+    cartStore.getCartItems();
+    router.push({name: 'HomePage'})
+  } else if (ok && styleAdd === 'buyNow'){
     cartStore.getCartItems();
     router.push({name: 'CartPage'})
   }

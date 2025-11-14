@@ -33,9 +33,10 @@ if(!refreshToken){
 try {
 
   const decoded = jwt.verify(refreshToken,process.env.JWT_REFRESH_SECRET)
-
+    
+  
   const newAccessToken = jwt.sign(
-    {id:decoded.id,userName:decoded.tenKH,role:decoded.role},
+    {id:decoded.id,userName:decoded.userName,role:decoded.role},
     process.env.JWT_SECRET,
     {expiresIn:'1m'}
   )
@@ -99,8 +100,7 @@ export const handleRegister = async (req,res) => {
     )
 
     const userId = result.insertId;
-  
-    const role = result.role;
+    const role = 'user'; // Sửa lại: role luôn là 'user' khi đăng ký
 
     const userInfor = {id:userId,userName,role}
 
