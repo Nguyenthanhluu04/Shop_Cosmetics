@@ -23,11 +23,13 @@ import RegisterPage from '@/views/RegisterPage.vue'
 import ProductDetailsPage from '@/views/ProductDetailsPage.vue'
 import BodyCartComponent from '@/components/BodyCartComponent.vue'
 import CartPage from '@/views/CartPage.vue'
+import UserProfilePage from '@/views/UserProfilePage.vue'
 
 
 const routes = [
    { path: '/',name: 'HomePage',component: HomePage,},
    { path: '/CartPage',name: 'CartPage',component: CartPage,},
+   { path: '/UserProfile',name: 'UserProfilePage',component: UserProfilePage,},
    { path: '/ProductDetails/:id',name: 'ProductDetailsPage',component: ProductDetailsPage,},
    { path: '/RegisterPage',name: 'RegisterPage',component: RegisterPage,},
    { path: '/LoginPage',name: 'LoginPage',component: LoginPage,},

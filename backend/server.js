@@ -12,10 +12,12 @@ app.use(bodyParser.json())
 import authRouter from './routes/authRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import cartRoutes from  './routes/cartRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 
 app.use('/api/auth', authRouter)
 app.use('/api/product',productRoutes)
 app.use('/api/cart',cartRoutes)
+app.use('/api/user', userRoutes)
 
 
 const PORT = process.env.PORT 

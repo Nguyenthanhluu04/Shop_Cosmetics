@@ -83,12 +83,22 @@ const setToken = (token,refresh) => {
      
   }
 
-  const handleLogOut =  () => {
-   accessToken.value = null
-   refreshToken.value = null
-    userInfor.value = null,
-   localStorage.removeItem('accessToken')
-   localStorage.removeItem('refreshToken')
+  const handleLogOut = () => {
+    accessToken.value = null
+    refreshToken.value = null
+    userInfor.value = null
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    
+    // Reset userProfileStore khi logout
+    try {
+      import('./userProfileStore.js').then(({ useUserProfileStore }) => {
+        const profileStore = useUserProfileStore();
+        profileStore.resetState();
+      });
+    } catch (error) {
+      console.error('Error resetting profile store:', error);
+    }
   }
 
   return {accessToken, refreshToken, userInfor,setToken, handleLogin, handleRegister, handleLogOut}
