@@ -94,3 +94,29 @@ export const handleProductDetails = async (req,res) => {
 
 }
 
+export const handleSearchProducts = async (req, res) => {
+    const searchQuery = req.query.q || '';
+    
+    try {
+        if (!searchQuery.trim()) {
+            return res.json({ products: [] });
+        }
+
+        const searchPattern = `%${searchQuery.trim()}%`;
+        
+        const [products] = await db.execute(
+            `SELECT *  
+             FROM products 
+             WHERE title LIKE ? 
+             ORDER BY id DESC 
+             LIMIT 20`,
+            [searchPattern]
+        );
+
+        res.json({ products });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Lỗi server khi tìm kiếm sản phẩm' });
+    }
+}
+

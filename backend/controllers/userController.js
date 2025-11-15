@@ -6,7 +6,7 @@ export const getUserInfo = async (req, res) => {
     const userId = req.user.id; // Từ token đã verify
     
     const [rows] = await db.query(
-      'SELECT id, tenKH, email, role FROM users WHERE id = ?',
+      'SELECT  tenKH, email FROM users WHERE id = ?',
       [userId]
     );
 

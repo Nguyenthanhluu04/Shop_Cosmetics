@@ -125,7 +125,7 @@ const resetForm = () => {
             type="text" 
             placeholder="Nhập họ và tên người nhận"
             :disabled="isLoading"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] disabled:bg-gray-100"
+            class="w-full px-4 py-2 placeholder:text-[#777] border rounded-md  focus:border-[var(--primary-color)]  disabled:bg-gray-100"
           />
         </div>
 
@@ -140,7 +140,7 @@ const resetForm = () => {
             placeholder="Nhập số điện thoại (10-11 số)"
             maxlength="11"
             :disabled="isLoading"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] disabled:bg-gray-100"
+            class="w-full px-4 py-2 placeholder:text-[#777] border rounded-md focus:border-[var(--primary-color)] disabled:bg-gray-100"
           />
         </div>
 
@@ -154,11 +154,9 @@ const resetForm = () => {
             rows="4" 
             placeholder="Nhập địa chỉ đầy đủ (số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố)"
             :disabled="isLoading"
-            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] disabled:bg-gray-100"
+            class="w-full px-4 py-2  placeholder:text-[#777] border rounded-md focus:border-[var(--primary-color)] disabled:bg-gray-100"
           ></textarea>
-          <p class="text-xs text-gray-500 mt-1">
-            Ví dụ: 123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh
-          </p>
+        
         </div>
       </div>
 

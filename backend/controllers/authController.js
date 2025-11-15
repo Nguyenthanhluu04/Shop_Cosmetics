@@ -8,7 +8,7 @@ export const generateAccessToken = (user) =>{
   return jwt.sign(
     user,
     process.env.JWT_SECRET,
-    { expiresIn: '1m'}
+    { expiresIn: '15m'}
   ) 
 }
 
@@ -38,7 +38,7 @@ try {
   const newAccessToken = jwt.sign(
     {id:decoded.id,userName:decoded.userName,role:decoded.role},
     process.env.JWT_SECRET,
-    {expiresIn:'1m'}
+    {expiresIn:'15m'}
   )
 
   res.json({accessToken: newAccessToken})

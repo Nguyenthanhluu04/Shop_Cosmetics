@@ -16,6 +16,9 @@ const sortType = ref('default')
 const listCategory = ref([])
 const categorys = ref('')
 const productDetails = ref([])
+const searchResults = ref([])
+const searchQuery = ref('')
+const searchHistory = ref(JSON.parse(localStorage.getItem('searchHistory') || '[]'))
 
 
 const handleGetProduct = async (sort = sortType.value , categoryName = categorys.value  ) => {
@@ -83,6 +86,52 @@ const handleGetCategory = async () => {
 
  }
 
+ const handleSearchProducts = async (query) => {
+   if (!query || !query.trim()) {
+      searchResults.value = []
+      return
+   }
+   
+   try {
+      const res = await api.get(`/api/product/search?q=${encodeURIComponent(query)}`)
+      searchResults.value = res.data.products
+   } catch (error) {
+      console.error('Lỗi tìm kiếm:', error)
+      searchResults.value = []
+   }
+ }
 
-return {accessToken,refreshToken,pageCurrent,totalPages,listProduct,limit,error,sortType,listCategory,categorys,productDetails,handleGetProduct,handleGoToPage,handleNextPage,handlePrePage,handleSort,handleGetCategory,handleGetProductCategory,handleProductDetails}
+ const addSearchHistory = (query) => {
+   if (!query || !query.trim()) return
+   
+   const searchQuery = query.trim()
+   
+   // Xóa query cũ nếu đã tồn tại
+   searchHistory.value = searchHistory.value.filter(item => item !== searchQuery)
+   
+   // Thêm query mới vào đầu
+   searchHistory.value.unshift(searchQuery)
+   
+   // Giới hạn 10 lịch sử
+   if (searchHistory.value.length > 10) {
+      searchHistory.value = searchHistory.value.slice(0, 10)
+   }
+   
+   // Lưu vào localStorage
+   localStorage.setItem('searchHistory', JSON.stringify(searchHistory.value))
+ }
+
+ const removeSearchHistoryItem = (query) => {
+   searchHistory.value = searchHistory.value.filter(item => item !== query)
+   localStorage.setItem('searchHistory', JSON.stringify(searchHistory.value))
+ }
+
+ const clearSearchHistory = () => {
+   searchHistory.value = []
+   localStorage.removeItem('searchHistory')
+ }
+
+
+return {accessToken,refreshToken,pageCurrent,totalPages,listProduct,limit,error,sortType,listCategory,categorys,productDetails,searchResults,searchQuery,searchHistory,
+   handleGetProduct,handleGoToPage,handleNextPage,handlePrePage,handleSort,handleGetCategory,handleGetProductCategory,handleProductDetails,handleSearchProducts,addSearchHistory,removeSearchHistoryItem,clearSearchHistory}
 })

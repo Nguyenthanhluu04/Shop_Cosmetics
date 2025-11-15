@@ -4,19 +4,16 @@ import { ref } from "vue";
 import { useUserStore } from './userStore';
 
 export const useUserProfileStore = defineStore('userProfileStore', () => {
-  // State
+
   const userProfile = ref({
-    id: null,
     tenKH: '',
-    email: '',
-    role: ''
+    email: ''
   });
   
   const addresses = ref([]);
   const isLoading = ref(false);
   const error = ref(null);
 
-  // Actions - User Profile
   const fetchUserProfile = async () => {
     try {
       isLoading.value = true;
@@ -194,10 +191,8 @@ export const useUserProfileStore = defineStore('userProfileStore', () => {
   // Reset state (useful for logout)
   const resetState = () => {
     userProfile.value = {
-      id: null,
       tenKH: '',
-      email: '',
-      role: ''
+      email: ''
     };
     addresses.value = [];
     error.value = null;

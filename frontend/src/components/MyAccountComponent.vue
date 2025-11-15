@@ -24,12 +24,12 @@ const loadUserInfo = async () => {
     const result = await profileStore.fetchUserProfile();
     if (result.success) {
       formData.value = {
-        tenKH: profileStore.userProfile.tenKH || '',
-        email: profileStore.userProfile.email || ''
+        tenKH: userProfile.value.tenKH || '',
+        email: userProfile.value.email || ''
       };
     }
   } else {
-    // Fallback to userStore if not logged in
+    
     formData.value = {
       tenKH: userStore?.userInfor?.userName || '',
       email: userStore?.userInfor?.email || ''
@@ -49,8 +49,8 @@ const handleCancel = () => {
   isEditing.value = false;
   // Reset về dữ liệu gốc từ store
   formData.value = {
-    tenKH: profileStore.userProfile.tenKH || '',
-    email: profileStore.userProfile.email || ''
+    tenKH: userProfile.value.tenKH || '',
+    email: userProfile.value.email || ''
   };
 };
 
@@ -62,7 +62,7 @@ const handleSave = async () => {
 
   if (result.success) {
     isEditing.value = false;
-    alert(result.message);
+    // alert(result.message);
   } else {
     alert(result.error);
   }
@@ -103,7 +103,7 @@ const handleSave = async () => {
               type="text" 
               :disabled="!isEditing"
               placeholder="Nhập tên khách hàng"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] disabled:bg-gray-50 disabled:text-gray-500"
+              class="w-full px-4 py-2 border rounded-md focus:border-[var(--primary-color)] disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
         </div>
@@ -117,7 +117,7 @@ const handleSave = async () => {
               type="email" 
               :disabled="!isEditing"
               placeholder="Nhập email"
-              class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)] disabled:bg-gray-50 disabled:text-gray-500"
+              class="w-full px-4 py-2 border rounded-md  focus:border-[var(--primary-color)] disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
         </div>
