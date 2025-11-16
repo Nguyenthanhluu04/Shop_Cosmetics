@@ -1,0 +1,297 @@
+<template>
+  <div>
+    <!-- Page Header -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-800 mb-2">Quản lý sản phẩm</h1>
+      <p class="text-gray-600">Quản lý thông tin sản phẩm trong hệ thống</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <AdminStatsCard 
+        title="Tổng sản phẩm"
+        :value="stats.total"
+        icon="box"
+        color="blue"
+      />
+      
+      <AdminStatsCard 
+        title="Đang bán"
+        :value="stats.active"
+        icon="check-circle"
+        color="green"
+      />
+      
+      <AdminStatsCard 
+        title="Hết hàng"
+        :value="stats.outOfStock"
+        icon="exclamation-triangle"
+        color="red"
+      />
+    </div>
+
+    <!-- Actions -->
+    <div class="mb-6 flex justify-between items-center">
+      <div class="flex gap-2">
+        <button 
+          @click="filterStatus('all')"
+          :class="activeFilter === 'all' ? 'bg-[var(--primary-color)] text-white' : 'bg-gray-100 text-gray-700'"
+          class="px-4 py-2 rounded-lg"
+        >
+          Tất cả
+        </button>
+        <button 
+          @click="filterStatus('active')"
+          :class="activeFilter === 'active' ? 'bg-[var(--primary-color)] text-white' : 'bg-gray-100 text-gray-700'"
+          class="px-4 py-2 rounded-lg"
+        >
+          Đang bán
+        </button>
+        <button 
+          @click="filterStatus('inactive')"
+          :class="activeFilter === 'inactive' ? 'bg-[var(--primary-color)] text-white' : 'bg-gray-100 text-gray-700'"
+          class="px-4 py-2 rounded-lg"
+        >
+          Hết hàng
+        </button>
+      </div>
+      
+      <button 
+        @click="openCreateModal"
+        class="bg-[var(--primary-color)] text-white px-4 py-2 rounded-lg hover:opacity-90"
+      >
+        <i class="fas fa-plus mr-2"></i>Thêm sản phẩm
+      </button>
+    </div>
+
+    <!-- Products Table -->
+    <AdminTable
+      :columns="columns"
+      :data="filteredProducts"
+      empty-text="Không có sản phẩm nào"
+      empty-icon="fas fa-box"
+    >
+      <!-- Custom cell for product name -->
+      <template #cell-name="{ item }">
+        <div class="flex items-center gap-3">
+          <img 
+            :src="item.image || '/placeholder.jpg'" 
+            class="w-12 h-12 rounded object-cover"
+            :alt="item.name"
+          />
+          <div>
+            <p class="font-medium text-gray-900">{{ item.name }}</p>
+            <p class="text-sm text-gray-500">{{ item.category }}</p>
+          </div>
+        </div>
+      </template>
+
+      <!-- Custom cell for price -->
+      <template #cell-price="{ item }">
+        <span class="font-semibold text-gray-900">
+          {{ formatPrice(item.price) }}
+        </span>
+      </template>
+
+      <!-- Custom cell for stock -->
+      <template #cell-stock="{ item }">
+        <AdminBadge 
+          :text="item.stock.toString()"
+          :variant="item.stock > 10 ? 'success' : item.stock > 0 ? 'warning' : 'danger'"
+          :icon="item.stock > 0 ? 'fas fa-check' : 'fas fa-times'"
+        />
+      </template>
+
+      <!-- Custom cell for status -->
+      <template #cell-status="{ item }">
+        <AdminBadge 
+          :text="item.status === 'active' ? 'Đang bán' : 'Ngừng bán'"
+          :variant="item.status === 'active' ? 'success' : 'default'"
+        />
+      </template>
+
+      <!-- Custom cell for actions -->
+      <template #cell-actions="{ item }">
+        <button 
+          @click="editProduct(item)"
+          class="text-blue-600 hover:text-blue-800 mr-3"
+        >
+          <i class="fas fa-edit mr-1"></i>Sửa
+        </button>
+        <button 
+          @click="deleteProduct(item)"
+          class="text-red-600 hover:text-red-800"
+        >
+          <i class="fas fa-trash mr-1"></i>Xóa
+        </button>
+      </template>
+    </AdminTable>
+
+    <!-- Create/Edit Modal -->
+    <AdminModal
+      :show="showModal"
+      :title="editMode ? 'Sửa sản phẩm' : 'Thêm sản phẩm mới'"
+      :icon="editMode ? 'fas fa-edit' : 'fas fa-plus'"
+      :confirm-text="editMode ? 'Cập nhật' : 'Tạo mới'"
+      confirm-icon="fas fa-save"
+      @close="closeModal"
+      @cancel="closeModal"
+      @confirm="handleSubmit"
+    >
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Tên sản phẩm
+          </label>
+          <input 
+            v-model="form.name"
+            type="text"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+            placeholder="Nhập tên sản phẩm"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Giá
+          </label>
+          <input 
+            v-model="form.price"
+            type="number"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+            placeholder="Nhập giá"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Số lượng
+          </label>
+          <input 
+            v-model="form.stock"
+            type="number"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+            placeholder="Nhập số lượng"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Trạng thái
+          </label>
+          <select 
+            v-model="form.status"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--primary-color)] focus:border-transparent outline-none"
+          >
+            <option value="active">Đang bán</option>
+            <option value="inactive">Ngừng bán</option>
+          </select>
+        </div>
+      </div>
+    </AdminModal>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+import AdminStatsCard from '@/components/admin/AdminStatsCard.vue'
+import AdminTable from '@/components/admin/AdminTable.vue'
+import AdminBadge from '@/components/admin/AdminBadge.vue'
+import AdminModal from '@/components/admin/AdminModal.vue'
+
+// Sample data
+const products = ref([
+  { id: 1, name: 'Son môi A', category: 'Makeup', price: 150000, stock: 50, status: 'active', image: null },
+  { id: 2, name: 'Kem dưỡng B', category: 'Skincare', price: 320000, stock: 5, status: 'active', image: null },
+  { id: 3, name: 'Nước hoa C', category: 'Fragrance', price: 980000, stock: 0, status: 'inactive', image: null }
+])
+
+const activeFilter = ref('all')
+const showModal = ref(false)
+const editMode = ref(false)
+const form = ref({
+  name: '',
+  price: 0,
+  stock: 0,
+  status: 'active'
+})
+
+// Table columns
+const columns = [
+  { key: 'id', label: 'ID', align: 'left' },
+  { key: 'name', label: 'Sản phẩm', align: 'left' },
+  { key: 'price', label: 'Giá', align: 'left' },
+  { key: 'stock', label: 'Kho', align: 'left' },
+  { key: 'status', label: 'Trạng thái', align: 'left' },
+  { key: 'actions', label: 'Thao tác', align: 'right' }
+]
+
+// Computed
+const stats = computed(() => ({
+  total: products.value.length,
+  active: products.value.filter(p => p.status === 'active').length,
+  outOfStock: products.value.filter(p => p.stock === 0).length
+}))
+
+const filteredProducts = computed(() => {
+  if (activeFilter.value === 'all') return products.value
+  if (activeFilter.value === 'active') return products.value.filter(p => p.status === 'active')
+  if (activeFilter.value === 'inactive') return products.value.filter(p => p.status === 'inactive')
+  return products.value
+})
+
+// Methods
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('vi-VN', { 
+    style: 'currency', 
+    currency: 'VND' 
+  }).format(price)
+}
+
+const filterStatus = (status) => {
+  activeFilter.value = status
+}
+
+const openCreateModal = () => {
+  editMode.value = false
+  form.value = { name: '', price: 0, stock: 0, status: 'active' }
+  showModal.value = true
+}
+
+const editProduct = (product) => {
+  editMode.value = true
+  form.value = { ...product }
+  showModal.value = true
+}
+
+const deleteProduct = (product) => {
+  if (confirm(`Bạn có chắc muốn xóa "${product.name}"?`)) {
+    const index = products.value.findIndex(p => p.id === product.id)
+    if (index > -1) {
+      products.value.splice(index, 1)
+    }
+  }
+}
+
+const closeModal = () => {
+  showModal.value = false
+}
+
+const handleSubmit = () => {
+  if (editMode.value) {
+    // Update existing
+    const index = products.value.findIndex(p => p.id === form.value.id)
+    if (index > -1) {
+      products.value[index] = { ...form.value }
+    }
+  } else {
+    // Create new
+    const newId = Math.max(...products.value.map(p => p.id)) + 1
+    products.value.push({ ...form.value, id: newId, category: 'Other', image: null })
+  }
+  closeModal()
+}
+</script>
+
+<style scoped>
+</style>

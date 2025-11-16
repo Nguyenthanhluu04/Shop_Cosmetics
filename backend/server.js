@@ -9,15 +9,11 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
-import authRouter from './routes/authRoutes.js'
-import productRoutes from './routes/productRoutes.js'
-import cartRoutes from  './routes/cartRoutes.js'
-import userRoutes from './routes/userRoutes.js'
+import userRouter from './routes/user/index.js'
+import adminRoutes from './routes/admin/index.js' // Updated admin routes
 
-app.use('/api/auth', authRouter)
-app.use('/api/product',productRoutes)
-app.use('/api/cart',cartRoutes)
-app.use('/api/user', userRoutes)
+app.use('/api', userRouter)
+app.use('/api/admin', adminRoutes) // All admin routes are organized under /api/admin
 
 
 const PORT = process.env.PORT 

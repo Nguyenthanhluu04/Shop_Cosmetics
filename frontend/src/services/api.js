@@ -9,7 +9,9 @@ const api = axios.create({
 
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  // Lấy currentUserId từ sessionStorage của tab này
+  const currentUserId = sessionStorage.getItem('currentUserId');
+  const token = currentUserId ? localStorage.getItem(`user_${currentUserId}_accessToken`) : null;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -26,12 +28,13 @@ api.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
 
-      const refreshToken = localStorage.getItem('refreshToken')
+      const currentUserId = sessionStorage.getItem('currentUserId')
+      const refreshToken = currentUserId ? localStorage.getItem(`user_${currentUserId}_refreshToken`) : null
       console.log('refreshToken', refreshToken)
 
-      if (!refreshToken) {
-        localStorage.clear()
-        window.location.href = '/LoginPage'
+      // Chỉ redirect nếu đã có refreshToken (tức là đã đăng nhập trước đó)
+      if (!refreshToken || !currentUserId) {
+        // Không redirect, chỉ reject error
         return Promise.reject(error)
       }
 
@@ -40,14 +43,18 @@ api.interceptors.response.use(
 
         const newAccessToken = res.data.accessToken
         console.log('newAC', res.data.accessToken)
-         localStorage.setItem('accessToken', newAccessToken)
+        localStorage.setItem(`user_${currentUserId}_accessToken`, newAccessToken)
              
         // Retry request cũ với token mới
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         return api(originalRequest)
       } catch (err) {
-        // Refresh thất bại → logout
-        localStorage.clear()
+        // Refresh thất bại → xóa token của user này và redirect
+        if (currentUserId) {
+          localStorage.removeItem(`user_${currentUserId}_accessToken`)
+          localStorage.removeItem(`user_${currentUserId}_refreshToken`)
+        }
+        sessionStorage.removeItem('currentUserId')
         window.location.href = '/LoginPage'
         return Promise.reject(err)
       }
