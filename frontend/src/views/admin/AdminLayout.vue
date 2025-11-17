@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { useAdminUIStore } from '@/stores/adminUIStore'
+import { useAdminUIStore } from '@/stores/admin/adminUIStore'
 import AdminHeader from '@/components/admin/AdminHeader.vue'
 import AdminSidebar from '@/components/admin/AdminSidebar.vue'
 

@@ -1,8 +1,10 @@
 <script setup>
 import { useCartStore } from '@/stores/user/cartStore';
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
 const cartStore = useCartStore();
+const router = useRouter();
 
 onMounted(() => {
     cartStore.getCartItems();
@@ -18,6 +20,14 @@ const handleDecrease = async (productId) => {
 
 const handleRemove = async (productId) => {
   await cartStore.removeCartItem(productId);
+}
+
+const handleCheckout = () => {
+  if (cartStore.listCartItems.length === 0) {
+    alert('Giỏ hàng trống');
+    return;
+  }
+  router.push({ name: 'CheckoutPage' });
 }
 
 </script>
@@ -79,7 +89,8 @@ const handleRemove = async (productId) => {
                 <span class="text-gray-700 text-lg font-medium">Tổng thanh toán :</span>
                 <span class="text-xl font-bold text-red-500">{{ cartStore.totalAmount }}đ</span>
                 <button
-                class="bg-red-600 text-white px-6 py-2 rounded-md font-medium hover:bg-red-700 transition">Mua Ngay</button>
+                @click="handleCheckout"
+                class="bg-red-600 text-white px-6 py-2 rounded-md font-medium hover:bg-red-700 transition">Thanh toán</button>
             </div>
         </div>
   </div>

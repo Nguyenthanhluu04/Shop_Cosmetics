@@ -11,7 +11,7 @@ const handleAddToCart = async (productId,quantity) => {
   
    try {
    
-     await api.post('/api/cart/addcart',{productId,quantity})
+     await api.post('/api/user/cart/addcart',{productId,quantity})
 
        return true;
     
@@ -24,7 +24,7 @@ const handleAddToCart = async (productId,quantity) => {
 const getCartItems = async () => {
 
   try {
-     const res = await api.get('/api/cart/getcartitems')
+     const res = await api.get('/api/user/cart/getcartitems')
 
      listCartItems.value = res.data.listCartItems;
      
@@ -41,7 +41,7 @@ const updateQuantity = async (productId, newQuantity) => {
   if (newQuantity < 1) return;
   
   try {
-    await api.put('/api/cart/updatequantity', { productId, quantity: newQuantity });
+    await api.put('/api/user/cart/updatequantity', { productId, quantity: newQuantity });
     
     // Cập nhật local state - tìm theo product_id
     const item = listCartItems.value.find(item => item.product_id === productId);
@@ -77,7 +77,7 @@ const decreaseQuantity = async (productId) => {
 
 const removeCartItem = async (productId) => {
   try {
-    await api.delete(`/api/cart/removeitem/${productId}`);
+    await api.delete(`/api/user/cart/removeitem/${productId}`);
     
     // Xóa khỏi local state - tìm theo product_id
     listCartItems.value = listCartItems.value.filter(item => item.product_id !== productId);
@@ -99,11 +99,20 @@ const totalAmount = computed(() => {
   return total.toLocaleString('vi-VN');
 })
 
+// Alias để tương thích với CheckoutPage
+const cartItems = computed(() => listCartItems.value)
+
+const fetchCartItems = async () => {
+  return await getCartItems()
+}
+
 
     return {
       listCartItems,
+      cartItems,
       handleAddToCart,
       getCartItems,
+      fetchCartItems,
       increaseQuantity,
       decreaseQuantity,
       removeCartItem,

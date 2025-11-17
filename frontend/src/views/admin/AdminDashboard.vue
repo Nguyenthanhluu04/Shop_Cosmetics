@@ -38,6 +38,7 @@
       <h2 class="text-lg font-semibold text-gray-800 mb-4">Thao tác nhanh</h2>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <router-link 
+          v-if="userRole === 'admin'"
           :to="{name: 'AdminUsers'}" 
           class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[var(--primary-color)] hover:shadow-md transition-all group"
         >
@@ -45,10 +46,13 @@
           <span class="text-sm text-gray-700 group-hover:text-[var(--primary-color)]">Quản lý tài khoản</span>
         </router-link>
 
-        <div class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[var(--primary-color)] hover:shadow-md transition-all group cursor-pointer">
+        <router-link 
+          :to="{name: 'AdminProducts'}" 
+          class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[var(--primary-color)] hover:shadow-md transition-all group"
+        >
           <i class="fas fa-box text-3xl text-gray-400 group-hover:text-[var(--primary-color)] mb-2"></i>
           <span class="text-sm text-gray-700 group-hover:text-[var(--primary-color)]">Quản lý sản phẩm</span>
-        </div>
+        </router-link>
 
         <div class="flex flex-col items-center p-4 border-2 border-gray-200 rounded-lg hover:border-[var(--primary-color)] hover:shadow-md transition-all group cursor-pointer">
           <i class="fas fa-shopping-cart text-3xl text-gray-400 group-hover:text-[var(--primary-color)] mb-2"></i>
@@ -100,9 +104,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useAdminStore } from '@/stores/adminStore'
+import { ref, onMounted, computed } from 'vue'
+import { useAdminStore } from '@/stores/admin/adminStore'
 import AdminStatsCard from '@/components/admin/AdminStatsCard.vue'
+import { jwtDecode } from 'jwt-decode'
 
 const adminStore = useAdminStore()
 const loading = ref(false)
@@ -116,19 +121,36 @@ const stats = ref({
 
 const recentUsers = ref([])
 
+const userRole = computed(() => {
+  const currentUserId = sessionStorage.getItem('currentUserId')
+  const token = currentUserId ? localStorage.getItem(`user_${currentUserId}_accessToken`) : null
+  if (token) {
+    try {
+      const decoded = jwtDecode(token)
+      return decoded.role
+    } catch (err) {
+      return null
+    }
+  }
+  return null
+})
+
 const loadDashboard = async () => {
   loading.value = true
   try {
-    await adminStore.fetchUsers()
-    const users = adminStore.users
-    
-    stats.value.totalUsers = users.length
-    stats.value.customers = users.filter(u => u.role === 'user').length
-    stats.value.staff = users.filter(u => u.role === 'staff').length
-    stats.value.admins = users.filter(u => u.role === 'admin').length
-    
-    // Get 5 most recent users
-    recentUsers.value = users.slice(0, 5)
+    // Admin và staff đều có thể xem thống kê users
+    if (userRole.value === 'admin' || userRole.value === 'staff') {
+      await adminStore.fetchUsers()
+      const users = adminStore.users
+      
+      stats.value.totalUsers = users.length
+      stats.value.customers = users.filter(u => u.role === 'user').length
+      stats.value.staff = users.filter(u => u.role === 'staff').length
+      stats.value.admins = users.filter(u => u.role === 'admin').length
+      
+      // Get 5 most recent users
+      recentUsers.value = users.slice(0, 5)
+    }
   } catch (err) {
     console.error('Load dashboard error', err)
   } finally {

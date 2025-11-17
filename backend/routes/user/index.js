@@ -3,6 +3,7 @@ import authRoutes from './authRoutes.js'
 import productRoutes from './productRoutes.js'
 import cartRoutes from './cartRoutes.js'
 import userRoutes from './userRoutes.js'
+import orderRoutes from './orderRoutes.js'
 
 const router = express.Router()
 
@@ -11,5 +12,6 @@ router.use('/auth', authRoutes)
 router.use('/product', productRoutes)
 router.use('/cart', cartRoutes)
 router.use('/profile', userRoutes)
+router.use('/orders', orderRoutes)
 
 export default router

@@ -6,10 +6,7 @@ import { getUsers, createStaff, updateUser, deleteUser } from '../../controllers
 
 const router = express.Router()
 
-// Dashboard - cả admin và staff đều truy cập được
 router.get('/', verifyToken, verifyRole(['admin', 'staff']), getUsers)
-
-// Chỉ admin mới được tạo, sửa, xóa user
 router.post('/', verifyToken, verifyRole(['admin']), createStaff)
 router.put('/:id', verifyToken, verifyRole(['admin']), updateUser)
 router.delete('/:id', verifyToken, verifyRole(['admin']), deleteUser)

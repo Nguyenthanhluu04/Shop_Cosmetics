@@ -1,12 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import HeaderComponent from '@/components/user/HeaderComponent.vue';
 import FooterComponent from '@/components/user/FooterComponent.vue';
 import MyAccountComponent from '@/components/user/MyAccountComponent.vue';
 import MyAddressComponent from '@/components/user/MyAddressComponent.vue';
 
 const route = useRoute();
+const router = useRouter();
 const activeTab = ref('account'); // 'account' or 'address'
 
 onMounted(() => {
@@ -18,6 +19,10 @@ onMounted(() => {
 
 const setActiveTab = (tab) => {
   activeTab.value = tab;
+};
+
+const goToOrders = () => {
+  router.push('/user/orders');
 };
 </script>
 
@@ -62,6 +67,7 @@ const setActiveTab = (tab) => {
               </button>
 
               <button 
+                @click="goToOrders"
                 class="w-full text-left px-4 py-3 rounded-md text-gray-700 hover:bg-gray-100 transition-colors flex items-center gap-3"
               >
                 <i class="fas fa-shopping-bag w-5 h-5"></i>

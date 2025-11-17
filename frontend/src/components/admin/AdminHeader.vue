@@ -14,17 +14,6 @@
       </div>
       
       <div class="flex items-center gap-4">
-        <!-- Notifications -->
-        <button class="relative text-gray-600 hover:text-gray-800">
-          <i class="fas fa-bell text-xl"></i>
-          <span 
-            v-if="adminUIStore.notificationCount > 0"
-            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-          >
-            {{ adminUIStore.notificationCount }}
-          </span>
-        </button>
-        
         <!-- User Menu -->
         <div class="relative group">
           <button class="flex items-center gap-2 text-gray-700 hover:text-gray-900">
@@ -56,7 +45,7 @@
 </template>
 
 <script setup>
-import { useAdminUIStore } from '@/stores/adminUIStore'
+import { useAdminUIStore } from '@/stores/admin/adminUIStore'
 import { useUserStore } from '@/stores/user/userStore'
 import { useRouter } from 'vue-router'
 

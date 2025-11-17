@@ -19,7 +19,7 @@ export const useUserProfileStore = defineStore('userProfileStore', () => {
       isLoading.value = true;
       error.value = null;
       
-      const response = await api.get('/api/profile/info');
+      const response = await api.get('/api/user/profile/info');
       userProfile.value = response.data;
       
       return { success: true };
@@ -57,7 +57,7 @@ export const useUserProfileStore = defineStore('userProfileStore', () => {
         throw new Error('Email không hợp lệ!');
       }
 
-      await api.put('/api/profile/info', {
+      await api.put('/api/user/profile/info', {
         tenKH: data.tenKH,
         email: data.email
       });
@@ -82,7 +82,7 @@ export const useUserProfileStore = defineStore('userProfileStore', () => {
       isLoading.value = true;
       error.value = null;
       
-      const response = await api.get('/api/profile/addresses');
+      const response = await api.get('/api/user/profile/addresses');
       addresses.value = response.data;
       
       return { success: true };
@@ -111,7 +111,7 @@ export const useUserProfileStore = defineStore('userProfileStore', () => {
         throw new Error('Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.');
       }
 
-      const response = await api.post('/api/profile/addresses', {
+      const response = await api.post('/api/user/profile/addresses', {
         userName: addressData.userName,
         phoneNumber: parseInt(addressData.phoneNumber),
         userAddress: addressData.userAddress
@@ -146,7 +146,7 @@ export const useUserProfileStore = defineStore('userProfileStore', () => {
         throw new Error('Số điện thoại không hợp lệ! Vui lòng nhập 10-11 chữ số.');
       }
 
-      await api.put(`/api/profile/addresses/${addressId}`, {
+      await api.put(`/api/user/profile/addresses/${addressId}`, {
         userName: addressData.userName,
         phoneNumber: parseInt(addressData.phoneNumber),
         userAddress: addressData.userAddress
@@ -170,7 +170,7 @@ export const useUserProfileStore = defineStore('userProfileStore', () => {
       isLoading.value = true;
       error.value = null;
 
-      await api.delete(`/api/profile/addresses/${addressId}`);
+      await api.delete(`/api/user/profile/addresses/${addressId}`);
 
       // Remove from local state
       addresses.value = addresses.value.filter(addr => addr.id !== addressId);

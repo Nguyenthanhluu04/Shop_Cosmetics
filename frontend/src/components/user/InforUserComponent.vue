@@ -16,6 +16,9 @@ const goToProfile = () => {
 const goToAddress = () => {
   router.push({ name: 'UserProfilePage', query: { tab: 'address' } });
 };
+const goToOrders = () => {
+  router.push({ name: 'MyOrdersPage' });
+};
 </script>
 
 <template>
@@ -29,7 +32,7 @@ const goToAddress = () => {
                                 <ul class="hidden z-10 group-hover:block absolute rounded-sm w-[160px] bg-[var(--white-color)] text-[#666] top-9 right-0">
                                   <li @click="goToProfile" class="px-3 py-1 font-normal hover:text-[var(--primary-color)] cursor-pointer">Tài khoản của tôi</li>
                                   <li @click="goToAddress" class="px-3 py-1 font-normal hover:text-[var(--primary-color)] cursor-pointer">Địa chỉ của tôi</li>
-                                  <li class="px-3 py-1 font-normal hover:text-[var(--primary-color)] cursor-pointer">Đơn hàng của tôi</li>
+                                  <li @click="goToOrders()" class="px-3 py-1 font-normal hover:text-[var(--primary-color)] cursor-pointer">Đơn hàng của tôi</li>
                                   <li class="pt-1 border-t-[1px] border-black/10"></li>
                                   <li @click="handleLouOut" class="px-3 py-1 font-normal hover:text-[var(--primary-color)] cursor-pointer">Đăng xuất</li>
                                 </ul>

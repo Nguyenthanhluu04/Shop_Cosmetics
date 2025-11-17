@@ -78,10 +78,10 @@
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr v-for="user in adminStore.users" :key="user.id" class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{{ user.id }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ user.id }}</td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--primary-color)] to-pink-400 flex items-center justify-center text-white font-semibold">
+                  <div class="w-10 h-10 rounded-full bg-gradient-to-br  from-[var(--primary-color)]  to-pink-400 flex items-center justify-center text-white font-semibold">
                     {{ user.tenKH?.charAt(0)?.toUpperCase() }}
                   </div>
                   <div>
@@ -239,7 +239,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useAdminStore } from '@/stores/adminStore'
+import { useAdminStore } from '@/stores/admin/adminStore'
 
 const adminStore = useAdminStore()
 const showModal = ref(false)

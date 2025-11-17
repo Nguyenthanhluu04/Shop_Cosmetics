@@ -12,7 +12,7 @@ app.use(bodyParser.json())
 import userRouter from './routes/user/index.js'
 import adminRoutes from './routes/admin/index.js' // Updated admin routes
 
-app.use('/api', userRouter)
+app.use('/api/user', userRouter)
 app.use('/api/admin', adminRoutes) // All admin routes are organized under /api/admin
 
 

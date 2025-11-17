@@ -66,7 +66,7 @@ const setToken = (token,refresh) => {
   const handleLogin = async (email,password) => {
 
     try {
-      const res = await api.post('/api/auth/login',{email,password})
+      const res = await api.post('/api/user/auth/login',{email,password})
 
       accessToken.value = res.data.accessToken
        refreshToken.value = res.data.refreshToken
@@ -85,7 +85,7 @@ const setToken = (token,refresh) => {
   const handleRegister = async (userName,email,password) => {
 
     try {   
-      const res = await api.post('/api/auth/register', {userName,email,password})
+      const res = await api.post('/api/user/auth/register', {userName,email,password})
   
        accessToken.value = res.data.accessToken
        refreshToken.value = res.data.refreshToken

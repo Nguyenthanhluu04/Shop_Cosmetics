@@ -34,29 +34,32 @@
           </router-link>
         </li>
         
-        <!-- Disabled for staff -->
-        <li v-else>
-          <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 cursor-not-allowed">
-            <i class="fas fa-users w-5"></i>
-            <span>Quản lý tài khoản</span>
-            <i class="fas fa-lock text-xs ml-auto"></i>
-          </div>
-        </li>
+    
 
         <!-- Quản lý sản phẩm -->
         <li>
-          <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 cursor-not-allowed">
+          <router-link 
+            :to="{name: 'AdminProducts'}" 
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-[var(--primary-color)] hover:text-white transition-colors"
+            active-class="bg-[var(--primary-color)] text-white"
+            @click="closeSidebarOnMobile"
+          >
             <i class="fas fa-box w-5"></i>
             <span>Quản lý sản phẩm</span>
-          </div>
+          </router-link>
         </li>
 
         <!-- Quản lý đơn hàng -->
         <li>
-          <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 cursor-not-allowed">
+          <router-link 
+            :to="{name: 'AdminOrders'}" 
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-[var(--primary-color)] hover:text-white transition-colors"
+            active-class="bg-[var(--primary-color)] text-white"
+            @click="closeSidebarOnMobile"
+          >
             <i class="fas fa-shopping-cart w-5"></i>
             <span>Quản lý đơn hàng</span>
-          </div>
+          </router-link>
         </li>
 
         <!-- Thống kê -->
@@ -80,7 +83,7 @@
 </template>
 
 <script setup>
-import { useAdminUIStore } from '@/stores/adminUIStore'
+import { useAdminUIStore } from '@/stores/admin/adminUIStore'
 
 const adminUIStore = useAdminUIStore()
 

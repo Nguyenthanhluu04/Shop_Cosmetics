@@ -24,15 +24,21 @@ import ProductDetailsPage from '@/views/user/ProductDetailsPage.vue'
 import BodyCartComponent from '@/components/user/BodyCartComponent.vue'
 import CartPage from '@/views/user/CartPage.vue'
 import UserProfilePage from '@/views/user/UserProfilePage.vue'
+import CheckoutPage from '@/views/user/CheckoutPage.vue'
+import MyOrdersPage from '@/views/user/MyOrdersPage.vue'
 import AdminLayout from '@/views/admin/AdminLayout.vue'
 import AdminDashboard from '@/views/admin/AdminDashboard.vue'
 import AdminUsers from '@/views/admin/AdminUsers.vue'
+import AdminProducts from '@/views/admin/AdminProducts.vue'
+import AdminOrders from '@/views/admin/AdminOrders.vue'
 import { jwtDecode } from 'jwt-decode'
 
 
 const routes = [
    { path: '/',name: 'HomePage',component: HomePage,},
    { path: '/CartPage',name: 'CartPage',component: CartPage,},
+   { path: '/checkout',name: 'CheckoutPage',component: CheckoutPage,},
+   { path: '/user/orders',name: 'MyOrdersPage',component: MyOrdersPage,},
    { path: '/UserProfile',name: 'UserProfilePage',component: UserProfilePage,},
    { path: '/ProductDetails/:id',name: 'ProductDetailsPage',component: ProductDetailsPage,},
    { path: '/RegisterPage',name: 'RegisterPage',component: RegisterPage,},
@@ -63,7 +69,9 @@ const routes = [
       redirect: '/admin/dashboard',
       children: [
         { path: 'dashboard', name: 'AdminDashboard', component: AdminDashboard },
-        { path: 'users', name: 'AdminUsers', component: AdminUsers }
+        { path: 'users', name: 'AdminUsers', component: AdminUsers },
+        { path: 'products', name: 'AdminProducts', component: AdminProducts },
+        { path: 'orders', name: 'AdminOrders', component: AdminOrders }
       ]
     },
 ]
@@ -85,6 +93,31 @@ router.beforeEach((to, from, next) => {
       return
     }
     
+    try {
+      const decoded = jwtDecode(token)
+      
+      // Kiểm tra quyền truy cập admin
+      if (decoded.role !== 'admin' && decoded.role !== 'staff') {
+        alert('Bạn không có quyền truy cập trang quản trị!')
+        next({ name: 'HomePage' })
+        return
+      }
+      
+      // Staff không được vào trang quản lý users
+      if (decoded.role === 'staff' && to.name === 'AdminUsers') {
+        alert('Bạn không có quyền truy cập chức năng này!')
+        next({ name: 'AdminDashboard' })
+        return
+      }
+      
+    } catch (err) {
+      // Token không hợp lệ
+      localStorage.removeItem(`user_${currentUserId}_accessToken`)
+      localStorage.removeItem(`user_${currentUserId}_refreshToken`)
+      sessionStorage.removeItem('currentUserId')
+      next({ name: 'LoginPage' })
+      return
+    }
   }
   
   // Ngăn admin/staff truy cập trang user (trừ login/register)

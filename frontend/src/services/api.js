@@ -39,7 +39,7 @@ api.interceptors.response.use(
       }
 
       try {
-        const res = await axios.post('http://localhost:3000/api/auth/refresh',{refreshToken})
+        const res = await axios.post('http://localhost:3000/api/user/auth/refresh',{refreshToken})
 
         const newAccessToken = res.data.accessToken
         console.log('newAC', res.data.accessToken)

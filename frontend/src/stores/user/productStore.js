@@ -24,7 +24,7 @@ const searchHistory = ref(JSON.parse(localStorage.getItem('searchHistory') || '[
 const handleGetProduct = async (sort = sortType.value , categoryName = categorys.value  ) => {
     
  try {
-    const res = await api.get(`/api/product/getproducts?page=${pageCurrent.value}&limit=${limit}&sort=${sort}&category=${categoryName}`)
+    const res = await api.get(`/api/user/product/getproducts?page=${pageCurrent.value}&limit=${limit}&sort=${sort}&category=${categoryName}`)
 
 
     listProduct.value = res.data.products
@@ -60,7 +60,7 @@ const handleGoToPage =  (page) => {
  }
 
 const handleGetCategory = async () => {
-    const res = await api.get('/api/product/getcategory')
+    const res = await api.get('/api/user/product/getcategory')
      
     listCategory.value = res.data.category;
 
@@ -74,7 +74,7 @@ const handleGetCategory = async () => {
  const handleProductDetails =  async (id) => {
 
    try {
-      const res = await api.get(`/api/product/gotodetail/${id}`)
+      const res = await api.get(`/api/user/product/gotodetail/${id}`)
        
       productDetails.value = res.data.productDetail;
       
@@ -93,7 +93,7 @@ const handleGetCategory = async () => {
    }
    
    try {
-      const res = await api.get(`/api/product/search?q=${encodeURIComponent(query)}`)
+      const res = await api.get(`/api/user/product/search?q=${encodeURIComponent(query)}`)
       searchResults.value = res.data.products
    } catch (error) {
       console.error('Lỗi tìm kiếm:', error)
