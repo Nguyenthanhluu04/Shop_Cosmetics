@@ -1,6 +1,4 @@
-# Quick Start Guide
-
-## Bắt đầu với Admin Panel mới
+## README - Shop My Pham - Thành Lưu
 
 ### Prerequisites
 
@@ -10,8 +8,6 @@
 - Code editor (VS Code recommended)
 
 ---
-
-## Quick Setup (5 phút)
 
 ### 1. Clone & Install
 
